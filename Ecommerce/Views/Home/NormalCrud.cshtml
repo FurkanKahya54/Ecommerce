@@ -1,0 +1,61 @@
+﻿@* @model List<Ecommerce.ViewModels.CompanyViewModel>
+
+<h2>Company Listesi</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Adı</th>
+            <th>Adres</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.CompanyName</td>
+                <td>@c.CompanyDescription</td>
+                <td>@c.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>
+ *@
+
+@model List<Ecommerce.ViewModels.CompanyViewModel>
+
+@{
+    ViewData["Title"] = "Normal CRUD (Senkron)";
+    Layout = "_Layout"; // varsa
+}
+
+<h2>@ViewData["Title"]</h2>
+
+
+<table class="table table-striped table-bordered mt-3">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Şirket Adı</th>
+            <th>Açıklama</th>
+            <th>Adres</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.CompanyName</td>
+                <td>@c.CompanyDescription</td>
+                <td>@c.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mt-4">
+    <a href="/Company/ParalelCrud" class="btn btn-success">Paralel CRUD’a Git (Hızlı Olan)</a>
+</div>
