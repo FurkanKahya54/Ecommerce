@@ -1,0 +1,101 @@
+﻿@model Ecommerce.ViewModels.ResultViewModel
+
+@{
+    ViewData["Title"] = "Parallel Data Fetch";
+}
+
+<h2>Parallel Data Fetch</h2>
+
+<p><strong>Elapsed Time:</strong> @ViewBag.Elapsed ms</p>
+
+<h3>Companies</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Company Name</th>
+            <th>Description</th>
+            <th>Locations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.CompanyViewModels)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.CompanyName</td>
+                <td>@c.CompanyDescription</td>
+                <td>@c.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Customers</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Locations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.CustomerViewModels)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.CustomerName</td>
+                <td>@c.CustomerDescription</td>
+                <td>@c.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Orders</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Order Name</th>
+            <th>Description</th>
+            <th>Locations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model.OrderViewModels)
+        {
+            <tr>
+                <td>@o.Id</td>
+                <td>@o.</td>
+                <td>@o.OrderDescription</td>
+                <td>@o.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Payments</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Locations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.PaymentViewModels)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.CustomerName</td>
+                <td>@p.CustomerDescription</td>
+                <td>@p.Locations</td>
+            </tr>
+        }
+    </tbody>
+</table>

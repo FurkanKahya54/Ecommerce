@@ -1,28 +1,4 @@
-﻿@* @model List<Ecommerce.ViewModels.CompanyViewModel>
-
-<h2>Company Listesi</h2>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Adı</th>
-            <th>Adres</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var c in Model)
-        {
-            <tr>
-                <td>@c.Id</td>
-                <td>@c.CompanyName</td>
-                <td>@c.CompanyDescription</td>
-                <td>@c.Locations</td>
-            </tr>
-        }
-    </tbody>
-</table>
- *@
+﻿@* 
 
 @model List<Ecommerce.ViewModels.CompanyViewModel>
 
@@ -59,3 +35,41 @@
 <div class="mt-4">
     <a href="/Company/ParalelCrud" class="btn btn-success">Paralel CRUD’a Git (Hızlı Olan)</a>
 </div>
+ *@
+
+
+@using Ecommerce.ViewModels;
+@model Ecommerce.ViewModels.ResultViewModel;
+
+<h2>Companies</h2>
+<ul>
+    @foreach (var company in Model.CompanyViewModels)
+    {
+        <li>@company.CompanyName - @company.CompanyDescription</li>
+    }
+</ul>
+
+<h2>Customers</h2>
+<ul>
+    @foreach (var customer in Model.CustomerViewModels)
+    {
+        <li>@customer.CustomerName - @customer.CustomerDescription</li>
+    }
+</ul>
+
+<h2>Orders</h2>
+<ul>
+    @foreach (var order in Model.OrderViewModels)
+    {
+        <li>@order.OrderDescription - @order.Locations</li>
+    }
+</ul>
+
+<h2>Payments</h2>
+<ul>
+    @foreach (var payment in Model.PaymentViewModels)
+    {
+        <li>@payment.CustomerName - @payment.Locations</li>
+    }
+</ul>
+<p>@Model.ElapsedMilliseconds</p>

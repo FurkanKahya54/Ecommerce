@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Ecommerce.Controllers
 {
@@ -24,46 +25,172 @@ namespace Ecommerce.Controllers
         }
 
 
+        //public IActionResult NormalCrud()
+        //{
+
+        //    var apiUrl = "https://localhost:7059/api/company";
+
+        //    // Klasik HttpWebRequest kullanýmý (tam senkron)
+        //    var request = (HttpWebRequest)WebRequest.Create(apiUrl);
+        //    request.Method = "GET";
+
+        //    List<CompanyViewModel> companies = new List<CompanyViewModel>();
+
+        //    using (var response = (HttpWebResponse)request.GetResponse())
+        //    using (var stream = response.GetResponseStream())
+        //    using (var reader = new StreamReader(stream))
+        //    {
+        //        var json = reader.ReadToEnd();
+        //        companies = JsonSerializer.Deserialize<List<ResultViewModel>>(json, new JsonSerializerOptions
+        //        {
+        //            PropertyNameCaseInsensitive = true
+        //        });
+        //    }
+
+        //    return View(companies);
+
+        //}
+
+        //public IActionResult NormalCrud()
+        //{
+        //    var apiUrl = "https://localhost:7059/api/company";
+
+        //    // Klasik HttpWebRequest kullanýmý (tam senkron)
+        //    var request = (HttpWebRequest)WebRequest.Create(apiUrl);
+        //    request.Method = "GET";
+
+        //    ResultViewModel result = null;
+
+        //    using (var response = (HttpWebResponse)request.GetResponse())
+        //    using (var stream = response.GetResponseStream())
+        //    using (var reader = new StreamReader(stream))
+        //    {
+        //        var json = reader.ReadToEnd();
+        //        result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
+        //        {
+        //            PropertyNameCaseInsensitive = true
+        //        });
+        //    }
+
+        //    return View(result);
+        //}
+        //public IActionResult NormalCrud()
+        //{
+        //    var apiUrl = "https://localhost:7059/api/company/getall";
+
+        //    var request = (HttpWebRequest)WebRequest.Create(apiUrl);
+        //    request.Method = "GET";
+
+        //    ResultViewModel result;
+        //    long elapsedMs;
+
+        //    using (var response = (HttpWebResponse)request.GetResponse())
+        //    using (var stream = response.GetResponseStream())
+        //    using (var reader = new StreamReader(stream))
+        //    {
+        //        var json = reader.ReadToEnd();
+
+        //        var obj = JsonSerializer.Deserialize<JsonElement>(json);
+        //        elapsedMs = obj.GetProperty("ElapsedMilliseconds").GetInt64();
+
+        //        result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
+        //        {
+        //            PropertyNameCaseInsensitive = true
+        //        });
+        //    }
+
+        //    ViewBag.Elapsed = elapsedMs;
+        //    return View(result);
+        //}
+        //public async Task<IActionResult> ParalelCrud()
+        //{
+        //    var apiUrl = "https://localhost:7059/api/company/parallel-tables";
+
+        //    var response = await _httpClient.GetAsync(apiUrl);
+        //    response.EnsureSuccessStatusCode();
+
+        //    var json = await response.Content.ReadAsStringAsync();
+
+        //    ViewBag.ResultJson = json; 
+        //    return View();
+        //}
         public IActionResult NormalCrud()
         {
+            var apiUrl = "https://localhost:7059/api/company/getall";
 
-            var apiUrl = "https://localhost:7059/api/company";
-
-            // Klasik HttpWebRequest kullanýmý (tam senkron)
             var request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.Method = "GET";
 
-            List<CompanyViewModel> companies = new List<CompanyViewModel>();
+            ResultViewModel result;
 
             using (var response = (HttpWebResponse)request.GetResponse())
             using (var stream = response.GetResponseStream())
             using (var reader = new StreamReader(stream))
             {
                 var json = reader.ReadToEnd();
-                companies = JsonSerializer.Deserialize<List<CompanyViewModel>>(json, new JsonSerializerOptions
+
+                // JsonElement ile uðraþma, direkt ResultViewModel'e deserialize et
+                result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
             }
 
-            return View(companies);
+            // ElapsedMilliseconds artýk direkt ResultViewModel üzerinden alýnabilir
+            ViewBag.Elapsed = result.ElapsedMilliseconds;
 
+            return View(result);
         }
-
-
-        public async Task<IActionResult> ParalelCrud()
+        public async Task<IActionResult> ParallelCrud()
         {
-            var apiUrl = "https://localhost:7059/api/company/parallel";
+            var apiUrl = "https://localhost:7059/api/company/parallel-tables";
 
+          
             var response = await _httpClient.GetAsync(apiUrl);
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
 
-            ViewBag.ResultJson = json; 
-            return View();
+           
+            var result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+          
+            ViewBag.Elapsed = result.ElapsedMilliseconds;
+
+            return View(result);
         }
 
+        //public async  Task<IActionResult> ParallelCrud()
+        //{
+        //    var apiUrl = "https://localhost:7059/api/company/parallel";
+
+        //    var request = (HttpWebRequest)WebRequest.Create(apiUrl);
+        //    request.Method = "GET";
+
+        //    ResultViewModel result;
+        //    long elapsedMs;
+
+        //    using (var response = (HttpWebResponse)request.GetResponse())
+        //    using (var stream = response.GetResponseStream())
+        //    using (var reader = new StreamReader(stream))
+        //    {
+        //        var json = reader.ReadToEnd();
+
+        //        var obj = JsonSerializer.Deserialize<JsonElement>(json);
+        //        elapsedMs = obj.GetProperty("ElapsedMilliseconds").GetInt64();
+
+        //        result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
+        //        {
+        //            PropertyNameCaseInsensitive = true
+        //        });
+        //    }
+
+        //    ViewBag.Elapsed = elapsedMs;
+        //    return View(result);
+        //}
 
         public IActionResult Privacy()
         {
