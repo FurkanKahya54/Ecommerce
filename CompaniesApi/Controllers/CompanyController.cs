@@ -30,15 +30,246 @@ namespace CompaniesApi.Controllers
         }
 
 
+        //[HttpGet("getall")]
+        //public IActionResult GetAll()
+        //{
+        //    var sw = Stopwatch.StartNew();
+
+        //    var companies = _context.Company.ToList();
+        //    var orders = _context2.Orders.ToList();
+        //    var customers = _context3.Customer.ToList();
+        //    var payments = _context4.Payment.ToList();
+
+        //    sw.Stop();
+
+        //    var result = new ResultViewModel
+        //    {
+        //        CompanyViewModels = companies.Select(c => new CompanyViewModel
+        //        {
+        //            Id = c.Id,
+        //            CompanyName = c.CompanyName,
+        //            CompanyDescription = c.CompanyDescription,
+        //            Locations = c.Locations
+        //        }).ToList(),
+        //        CustomerViewModels = customers.Select(c => new CustomerViewModel
+        //        {
+        //            Id = c.Id,
+        //            CustomerName = c.CustomerName,
+        //            CustomerDescription = c.CustomerDescription,
+        //            Locations = c.Locations
+        //        }).ToList(),
+        //        OrderViewModels = orders.Select(o => new OrderViewModel
+        //        {
+        //            Id = o.Id,
+        //            OrderName = o.OrderName,
+        //            OrderDescription = o.OrderDescription,
+        //            Locations = o.Locations
+        //        }).ToList(),
+        //        PaymentViewModels = payments.Select(p => new PaymentViewModel
+        //        {
+        //            Id = p.Id,
+        //            CustomerName = p.PaymentName,
+        //            CustomerDescription = p.PaymentDescription,
+        //            Locations = p.Locations
+        //        }).ToList(),
+        //        ElapsedMilliseconds = sw.ElapsedMilliseconds
+        //    };
+
+        //    return Ok(result);
+        //}
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
             var sw = Stopwatch.StartNew();
 
+            // 1️⃣ Veriyi geleneksel şekilde (sıralı) çek
             var companies = _context.Company.ToList();
             var orders = _context2.Orders.ToList();
             var customers = _context3.Customer.ToList();
             var payments = _context4.Payment.ToList();
+
+            // 2️⃣ Her tabloya CPU yoğun işlemi geleneksel (tek çekirdek) şekilde uygula
+            foreach (var c in companies)
+            {
+                c.CompanyDescription = HeavyStringProcessing(c.CompanyDescription);
+            }
+
+            foreach (var c in customers)
+            {
+                c.CustomerDescription = HeavyStringProcessing(c.CustomerDescription);
+            }
+
+            foreach (var o in orders)
+            {
+                o.OrderDescription = HeavyStringProcessing(o.OrderDescription);
+            }
+
+            foreach (var p in payments)
+            {
+                p.PaymentDescription = HeavyStringProcessing(p.PaymentDescription);
+            }
+
+            sw.Stop();
+
+            // 3️⃣ Sonuç modelini oluştur
+            var result = new ResultViewModel
+            {
+                CompanyViewModels = companies.Select(c => new CompanyViewModel
+                {
+                    Id = c.Id,
+                    CompanyName = c.CompanyName,
+                    CompanyDescription = c.CompanyDescription,
+                    Locations = c.Locations
+                }).ToList(),
+
+                CustomerViewModels = customers.Select(c => new CustomerViewModel
+                {
+                    Id = c.Id,
+                    CustomerName = c.CustomerName,
+                    CustomerDescription = c.CustomerDescription,
+                    Locations = c.Locations
+                }).ToList(),
+
+                OrderViewModels = orders.Select(o => new OrderViewModel
+                {
+                    Id = o.Id,
+                    OrderName = o.OrderName,
+                    OrderDescription = o.OrderDescription,
+                    Locations = o.Locations
+                }).ToList(),
+
+                PaymentViewModels = payments.Select(p => new PaymentViewModel
+                {
+                    Id = p.Id,
+                    CustomerName = p.PaymentName,
+                    CustomerDescription = p.PaymentDescription,
+                    Locations = p.Locations
+                }).ToList(),
+
+                ElapsedMilliseconds = sw.ElapsedMilliseconds
+            };
+
+            return Ok(result);
+        }
+
+        //// CPU yoğun fonksiyon (sıralı versiyon)
+        //private static string HeavyStringProcessing(string input)
+        //{
+        //    if (string.IsNullOrEmpty(input)) return input;
+        //    // CPU yoğun simülasyon
+        //    for (int i = 0; i < 10000; i++)
+        //    {
+        //        input = new string(input.Reverse().ToArray());
+        //    }
+        //    return input;
+        //}
+
+
+        //[HttpGet("parallel-tables")]
+        //public async Task<IActionResult> GetParallelTables([FromServices] IDbContextFactory<AppDb_Context> contextFactory, IDbContextFactory<AppDb2_Context> contextFactory2, IDbContextFactory<AppDb3_Context> contextFactory3, IDbContextFactory<AppDb4_Context> contextFactory4)
+        //{
+        //    var sw = Stopwatch.StartNew();
+
+        //    var taskCompanies = contextFactory.CreateDbContext().Company.ToListAsync();
+        //    var taskOrders = contextFactory2.CreateDbContext().Orders.ToListAsync();
+        //    var taskCustomers = contextFactory3.CreateDbContext().Customer.ToListAsync();
+        //    var taskProducts = contextFactory4.CreateDbContext().Payment.ToListAsync();
+
+        //    await Task.WhenAll(taskCompanies, taskCustomers, taskOrders, taskProducts);
+        //    sw.Stop();
+        //    var result = new ResultViewModel
+        //    {
+        //        CompanyViewModels = taskCompanies.Result.Select(c => new CompanyViewModel
+        //        {
+        //            Id = c.Id,
+        //            CompanyName = c.CompanyName,
+        //            CompanyDescription = c.CompanyDescription,
+        //            Locations = c.Locations
+        //        }).ToList(),
+
+        //        CustomerViewModels = taskCustomers.Result.Select(c => new CustomerViewModel
+        //        {
+        //            Id = c.Id,
+        //            CustomerName = c.CustomerName ,
+        //            CustomerDescription = c.CustomerDescription,
+        //            Locations = c.Locations
+        //        }).ToList(),
+
+        //        OrderViewModels = taskOrders.Result.Select(o => new OrderViewModel
+        //        {
+        //            Id = o.Id,
+        //            OrderName = o.OrderName,
+        //            OrderDescription = o.OrderDescription,
+        //            Locations = o.Locations
+        //        }).ToList(),
+
+        //        PaymentViewModels = taskProducts.Result.Select(p => new PaymentViewModel
+        //        {
+        //            Id = p.Id,
+        //            CustomerName = p.PaymentName,
+        //            CustomerDescription = p.PaymentDescription,
+        //            Locations = p.Locations
+        //        }).ToList(),
+
+        //        ElapsedMilliseconds = sw.ElapsedMilliseconds
+        //    };
+
+
+
+
+
+
+
+
+
+
+
+        //    return Ok(result);
+        //}
+        [HttpGet("parallel-tables")]
+        public async Task<IActionResult> GetParallelTablesCpu([FromServices] IDbContextFactory<AppDb_Context> contextFactory,
+                                                     IDbContextFactory<AppDb2_Context> contextFactory2,
+                                                     IDbContextFactory<AppDb3_Context> contextFactory3,
+                                                     IDbContextFactory<AppDb4_Context> contextFactory4)
+        {
+            var sw = Stopwatch.StartNew();
+
+            // 1️⃣ Veritabanından verileri asenkron (I/O-bound) çekelim
+            var taskCompanies = contextFactory.CreateDbContext().Company.ToListAsync();
+            var taskOrders = contextFactory2.CreateDbContext().Orders.ToListAsync();
+            var taskCustomers = contextFactory3.CreateDbContext().Customer.ToListAsync();
+            var taskPayments = contextFactory4.CreateDbContext().Payment.ToListAsync();
+
+            await Task.WhenAll(taskCompanies, taskOrders, taskCustomers, taskPayments);
+
+            // 2️⃣ Şimdi elimizde veriler var.
+            // Bunlar üzerinde CPU yoğun hesaplama yapalım (örnek olarak karmaşık string işlemleri)
+            var companies = taskCompanies.Result;
+            var orders = taskOrders.Result;
+            var customers = taskCustomers.Result;
+            var payments = taskPayments.Result;
+
+            // Bu kısım gerçek CPU-paralel kısım:
+            Parallel.ForEach(companies, c =>
+            {
+                // CPU’yu zorlayacak örnek işlem:
+                c.CompanyDescription = HeavyStringProcessing(c.CompanyDescription);
+            });
+
+            Parallel.ForEach(customers, c =>
+            {
+                c.CustomerDescription = HeavyStringProcessing(c.CustomerDescription);
+            });
+
+            Parallel.ForEach(orders, o =>
+            {
+                o.OrderDescription = HeavyStringProcessing(o.OrderDescription);
+            });
+
+            Parallel.ForEach(payments, p =>
+            {
+                p.PaymentDescription = HeavyStringProcessing(p.PaymentDescription);
+            });
 
             sw.Stop();
 
@@ -51,6 +282,7 @@ namespace CompaniesApi.Controllers
                     CompanyDescription = c.CompanyDescription,
                     Locations = c.Locations
                 }).ToList(),
+
                 CustomerViewModels = customers.Select(c => new CustomerViewModel
                 {
                     Id = c.Id,
@@ -58,6 +290,7 @@ namespace CompaniesApi.Controllers
                     CustomerDescription = c.CustomerDescription,
                     Locations = c.Locations
                 }).ToList(),
+
                 OrderViewModels = orders.Select(o => new OrderViewModel
                 {
                     Id = o.Id,
@@ -65,6 +298,7 @@ namespace CompaniesApi.Controllers
                     OrderDescription = o.OrderDescription,
                     Locations = o.Locations
                 }).ToList(),
+
                 PaymentViewModels = payments.Select(p => new PaymentViewModel
                 {
                     Id = p.Id,
@@ -72,62 +306,23 @@ namespace CompaniesApi.Controllers
                     CustomerDescription = p.PaymentDescription,
                     Locations = p.Locations
                 }).ToList(),
+
                 ElapsedMilliseconds = sw.ElapsedMilliseconds
             };
 
             return Ok(result);
         }
 
-
-        [HttpGet("parallel-tables")]
-        public async Task<IActionResult> GetParallelTables([FromServices] IDbContextFactory<AppDb_Context> contextFactory, IDbContextFactory<AppDb2_Context> contextFactory2, IDbContextFactory<AppDb3_Context> contextFactory3, IDbContextFactory<AppDb4_Context> contextFactory4)
+        // CPU’yu zorlayan sahte işlem (örnek)
+        private static string HeavyStringProcessing(string input)
         {
-            var sw = Stopwatch.StartNew();
-
-            var taskCompanies = contextFactory.CreateDbContext().Company.ToListAsync();
-            var taskOrders = contextFactory2.CreateDbContext().Orders.ToListAsync();
-            var taskCustomers = contextFactory3.CreateDbContext().Customer.ToListAsync();
-            var taskProducts = contextFactory4.CreateDbContext().Payment.ToListAsync();
-
-            await Task.WhenAll(taskCompanies, taskCustomers, taskOrders, taskProducts);
-            sw.Stop();
-            var result = new ResultViewModel
+            if (string.IsNullOrEmpty(input)) return input;
+            // CPU yoğun: hashing, pattern analizi veya matematiksel işlem simülasyonu
+            for (int i = 0; i < 10000; i++)
             {
-                CompanyViewModels = taskCompanies.Result.Select(c => new CompanyViewModel
-                {
-                    Id = c.Id,
-                    CompanyName = c.CompanyName,
-                    CompanyDescription = c.CompanyDescription,
-                    Locations = c.Locations
-                }).ToList(),
-
-                CustomerViewModels = taskCustomers.Result.Select(c => new CustomerViewModel
-                {
-                    Id = c.Id,
-                    CustomerName = c.CustomerName ,
-                    CustomerDescription = c.CustomerDescription,
-                    Locations = c.Locations
-                }).ToList(),
-
-                OrderViewModels = taskOrders.Result.Select(o => new OrderViewModel
-                {
-                    Id = o.Id,
-                    OrderName = o.OrderName,
-                    OrderDescription = o.OrderDescription,
-                    Locations = o.Locations
-                }).ToList(),
-
-                PaymentViewModels = taskProducts.Result.Select(p => new PaymentViewModel
-                {
-                    Id = p.Id,
-                    CustomerName = p.PaymentName,
-                    CustomerDescription = p.PaymentDescription,
-                    Locations = p.Locations
-                }).ToList(),
-
-                ElapsedMilliseconds = sw.ElapsedMilliseconds
-            };
-            return Ok(result);
+                input = new string(input.Reverse().ToArray());
+            }
+            return input;
         }
 
 
