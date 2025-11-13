@@ -129,14 +129,14 @@ namespace Ecommerce.Controllers
             {
                 var json = reader.ReadToEnd();
 
-                // JsonElement ile uðraþma, direkt ResultViewModel'e deserialize et
+              
                 result = JsonSerializer.Deserialize<ResultViewModel>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
             }
 
-            // ElapsedMilliseconds artýk direkt ResultViewModel üzerinden alýnabilir
+        
             ViewBag.Elapsed = result.ElapsedMilliseconds;
 
             return View(result);

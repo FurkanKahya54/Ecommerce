@@ -1,101 +1,219 @@
 ﻿@model Ecommerce.ViewModels.ResultViewModel
 
 @{
-    ViewData["Title"] = "Parallel Data Fetch";
+    ViewData["Title"] = "Parallel Data İşlemi";
 }
 
-<h2>Parallel Data Fetch</h2>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 40px;
+        color: #333;
+    }
 
-<p><strong>Elapsed Time:</strong> @ViewBag.Elapsed ms</p>
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
 
-<h3>Companies</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Company Name</th>
-            <th>Description</th>
-            <th>Locations</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var c in Model.CompanyViewModels)
-        {
-            <tr>
-                <td>@c.Id</td>
-                <td>@c.CompanyName</td>
-                <td>@c.CompanyDescription</td>
-                <td>@c.Locations</td>
-            </tr>
+    h1 {
+        text-align: center;
+        color: #2b5876;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+
+    .elapsed-box {
+        text-align: center;
+        background: linear-gradient(135deg, #4e4376, #2b5876);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        font-size: 18px;
+        font-weight: 500;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        display: inline-block;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    section {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        margin-bottom: 35px;
+        padding: 25px 30px;
+        transition: transform 0.2s ease;
+    }
+
+        section:hover {
+            transform: translateY(-3px);
         }
-    </tbody>
-</table>
 
-<h3>Customers</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Locations</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var c in Model.CustomerViewModels)
-        {
-            <tr>
-                <td>@c.Id</td>
-                <td>@c.CustomerName</td>
-                <td>@c.CustomerDescription</td>
-                <td>@c.Locations</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    h3 {
+        color: #2b5876;
+        border-left: 5px solid #4e4376;
+        padding-left: 10px;
+        margin-bottom: 20px;
+    }
 
-<h3>Orders</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Order Name</th>
-            <th>Description</th>
-            <th>Locations</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var o in Model.OrderViewModels)
-        {
-            <tr>
-                <td>@o.Id</td>
-                <td>@o.</td>
-                <td>@o.OrderDescription</td>
-                <td>@o.Locations</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 10px;
+        font-size: 15px;
+    }
 
-<h3>Payments</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Locations</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model.PaymentViewModels)
-        {
-            <tr>
-                <td>@p.Id</td>
-                <td>@p.CustomerName</td>
-                <td>@p.CustomerDescription</td>
-                <td>@p.Locations</td>
-            </tr>
+    thead {
+        background: #2b5876;
+        color: white;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tbody tr:hover {
+        background: #f3f5f9;
+        transition: background 0.2s ease;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .back-btn {
+        display: inline-block;
+        text-decoration: none;
+        background: linear-gradient(135deg, #4e4376, #2b5876);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+        transition: 0.3s;
+    }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #2b5876, #4e4376);
+            transform: scale(1.05);
         }
-    </tbody>
-</table>
+</style>
+
+<div class="container">
+    <h1>Paralel Veri İşlemi Sonuçları</h1>
+
+    <div class="elapsed-box">
+        <strong>İşlem Süresi:</strong> @ViewBag.Elapsed ms
+    </div>
+
+    <section>
+        <h3>Şirketler</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Şirket Adı</th>
+                    <th>Açıklama</th>
+                    <th>Lokasyonlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.CompanyViewModels)
+                {
+                    <tr>
+                        <td>@c.Id</td>
+                        <td>@c.CompanyName</td>
+                        <td>@c.CompanyDescription</td>
+                        <td>@c.Locations</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Müşteriler</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>İsim</th>
+                    <th>Açıklama</th>
+                    <th>Lokasyonlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.CustomerViewModels)
+                {
+                    <tr>
+                        <td>@c.Id</td>
+                        <td>@c.CustomerName</td>
+                        <td>@c.CustomerDescription</td>
+                        <td>@c.Locations</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Siparişler</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Sipariş Adı</th>
+                    <th>Açıklama</th>
+                    <th>Lokasyonlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.OrderViewModels)
+                {
+                    <tr>
+                        <td>@o.Id</td>
+                        <td>@o.OrderDescription</td>
+                        <td>@o.OrderDescription</td>
+                        <td>@o.Locations</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Ödemeler</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Müşteri</th>
+                    <th>Açıklama</th>
+                    <th>Lokasyonlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.PaymentViewModels)
+                {
+                    <tr>
+                        <td>@p.Id</td>
+                        <td>@p.CustomerName</td>
+                        <td>@p.CustomerDescription</td>
+                        <td>@p.Locations</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+
+    <div style="text-align:center;">
+        <a href="@Url.Action("Index", "Home")" class="back-btn">← Ana Sayfaya Dön</a>
+    </div>
+</div>

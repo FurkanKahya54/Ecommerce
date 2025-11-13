@@ -82,13 +82,13 @@ namespace CompaniesApi.Controllers
         {
             var sw = Stopwatch.StartNew();
 
-            // 1️⃣ Veriyi geleneksel şekilde (sıralı) çek
+           
             var companies = _context.Company.ToList();
             var orders = _context2.Orders.ToList();
             var customers = _context3.Customer.ToList();
             var payments = _context4.Payment.ToList();
 
-            // 2️⃣ Her tabloya CPU yoğun işlemi geleneksel (tek çekirdek) şekilde uygula
+          
             foreach (var c in companies)
             {
                 c.CompanyDescription = HeavyStringProcessing(c.CompanyDescription);
@@ -111,7 +111,7 @@ namespace CompaniesApi.Controllers
 
             sw.Stop();
 
-            // 3️⃣ Sonuç modelini oluştur
+        
             var result = new ResultViewModel
             {
                 CompanyViewModels = companies.Select(c => new CompanyViewModel
@@ -152,18 +152,7 @@ namespace CompaniesApi.Controllers
             return Ok(result);
         }
 
-        //// CPU yoğun fonksiyon (sıralı versiyon)
-        //private static string HeavyStringProcessing(string input)
-        //{
-        //    if (string.IsNullOrEmpty(input)) return input;
-        //    // CPU yoğun simülasyon
-        //    for (int i = 0; i < 10000; i++)
-        //    {
-        //        input = new string(input.Reverse().ToArray());
-        //    }
-        //    return input;
-        //}
-
+     
 
         //[HttpGet("parallel-tables")]
         //public async Task<IActionResult> GetParallelTables([FromServices] IDbContextFactory<AppDb_Context> contextFactory, IDbContextFactory<AppDb2_Context> contextFactory2, IDbContextFactory<AppDb3_Context> contextFactory3, IDbContextFactory<AppDb4_Context> contextFactory4)
@@ -234,7 +223,7 @@ namespace CompaniesApi.Controllers
         {
             var sw = Stopwatch.StartNew();
 
-            // 1️⃣ Veritabanından verileri asenkron (I/O-bound) çekelim
+           
             var taskCompanies = contextFactory.CreateDbContext().Company.ToListAsync();
             var taskOrders = contextFactory2.CreateDbContext().Orders.ToListAsync();
             var taskCustomers = contextFactory3.CreateDbContext().Customer.ToListAsync();
@@ -242,17 +231,16 @@ namespace CompaniesApi.Controllers
 
             await Task.WhenAll(taskCompanies, taskOrders, taskCustomers, taskPayments);
 
-            // 2️⃣ Şimdi elimizde veriler var.
-            // Bunlar üzerinde CPU yoğun hesaplama yapalım (örnek olarak karmaşık string işlemleri)
+           
             var companies = taskCompanies.Result;
             var orders = taskOrders.Result;
             var customers = taskCustomers.Result;
             var payments = taskPayments.Result;
 
-            // Bu kısım gerçek CPU-paralel kısım:
+          
             Parallel.ForEach(companies, c =>
             {
-                // CPU’yu zorlayacak örnek işlem:
+               
                 c.CompanyDescription = HeavyStringProcessing(c.CompanyDescription);
             });
 
@@ -313,11 +301,11 @@ namespace CompaniesApi.Controllers
             return Ok(result);
         }
 
-        // CPU’yu zorlayan sahte işlem (örnek)
+       
         private static string HeavyStringProcessing(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
-            // CPU yoğun: hashing, pattern analizi veya matematiksel işlem simülasyonu
+
             for (int i = 0; i < 10000; i++)
             {
                 input = new string(input.Reverse().ToArray());
